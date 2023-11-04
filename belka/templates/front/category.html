@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<style type="text/css">
+    .doers { list-style-type: none; padding-left: 0; }
+    .doer { clear: both; margin: 0 0 10px 0;}
+    .doer h2 { font-size: 1.3em; }
+    .doer .experience { color: #666; font-size: .8em; }
+    .doer .avatar { width: 150px; height: 150px; float: left; margin: 0 10px 10px 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>
+    Каталог услуг: {{ cat.name }}
+</h1>
+
+{% if doers|length == 0 %}
+<p>
+    В этой категории нет исполнителей. Вы можете заработать кучу денег, если займётесь "{{ cat.name }}".
+</p>
+{% else %}
+
+<ul class="doers">
+{% for doer, user_service, cat in doers %}
+    <li class="doer">
+        {% if doer.avatar %}
+            <img src="{{ doer.avatar }}" class="avatar">
+        {% endif %}
+        <h2><a href="{{ doer.url_profile() }}">{{ doer.name }}</a></h2>
+        {% if user_service.exp_since %}
+            <p class="experience">
+                стаж с {{ user_service.exp_since.strftime('%Y') }} года
+            </p>
+        {% endif %}
+        <p>{{ user_service.description or '' }}</p>
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+
+{% endblock %}

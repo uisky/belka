@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Регистрация</h1>
+
+<form method="post" action="{{ url_for('front.register') }}">
+    <div class="mb-3">
+        <label>Email:</label>
+        <input type="text" name="email" class="form-control">
+        <p class="form-text">Рабочий. Спамить не будем.</p>
+    </div>
+    <div class="mb-3">
+        <label>Пароль:</label>
+        <input type="password" name="password" class="form-control">
+        <p class="form-text">Шесть или больше символов.</p>
+    </div>
+    <div class="mb-3">
+        <label>А зовут меня:</label>
+        <input type="text" name="name" class="form-control" placeholder="Генадий">
+        <p class="form-text">Нам, в принципе, до пизды, как вас зовут.</p>
+    </div>
+    <button type="submit" class="btn btn-primary">Enter</button>
+    <a href="{{ url_for('front.login') }}">Я вспомнил, у меня есть рега</a>
+</form>
+{% endblock %}

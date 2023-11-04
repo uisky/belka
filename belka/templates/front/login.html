@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Login</h1>
+
+<form method="post" action="{{ url_for('.login') }}">
+    <div class="mb-3">
+        <label>Email:</label>
+        <input type="text" name="email" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label>Password:</label>
+        <input type="password" name="password" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Enter</button>
+</form>
+
+<p>
+    Нет реги? <a href="{{ url_for('front.register') }} ">Зарегайся</a>
+</p>
+
+
+
+{% endblock %}

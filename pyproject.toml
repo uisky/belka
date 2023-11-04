@@ -1,0 +1,15 @@
+[project]
+name = "romakhin"
+version = "0.0.1"
+description = "Romakhin.ru"
+dependencies = [
+    "flask",
+    "flask_login",
+    "Flask-SQLAlchemy",
+    "psycopg2",
+    "pydantic"
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"

@@ -1,0 +1,8 @@
+flask
+flask_login
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2
+pydantic
+
+Werkzeug==2.3
