@@ -6,3 +6,4 @@ db = SQLAlchemy()
 
 from .users import *
 from .apis import *
+from .data import *

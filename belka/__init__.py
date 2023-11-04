@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 
 from belka.models import db, User, AnonymousUser
 from belka.jinja import init_jinja
@@ -44,6 +45,9 @@ def create_app(test_config=None):
 
     # CLI
     init_commands(app)
+
+    # CSRF
+    CSRFProtect(app)
 
     return app
 

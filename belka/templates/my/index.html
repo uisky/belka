@@ -13,14 +13,14 @@
 {% else %}
 
 <div class="container">
-{% for api in apis %}
+{% for api, cnt_data in apis %}
 <div class="row">
     <div class="col-10">
-        <code>{{ api.name }}</code>
+        <code>{{ api.name }}</code> ({{ cnt_data }} записи)
         <p>{{ api.title }}</p>
     </div>
     <div class="col-2 text-end">
-        <a href="#" class="btn btn-sm btn-success mb-1">Данные</a>
+        <a href="{{ url_for('.data', api_id=api.id) }}" class="btn btn-sm btn-success mb-1">Данные</a>
         <a href="{{ url_for('.edit', api_id=api.id) }}" class="btn btn-sm btn-warning mb-1">Изменить схему</a><br>
     </div>
 </div>

@@ -1,4 +1,6 @@
-from sqlalchemy.dialects.postgresql import ARRAY
+import uuid
+import datetime
+import random
 
 from . import db
 
@@ -30,6 +32,7 @@ class Api(db.Model):
     description = db.Column(db.String(4096))
 
     fields = db.relationship('Field')
+    data = db.relationship('Data')
 
 
 class Field(db.Model):
@@ -39,7 +42,7 @@ class Field(db.Model):
     created = db.Column(db.DateTime(timezone=True), nullable=False, server_default=db.func.now())
     api_id = db.Column(db.Integer(), db.ForeignKey('apis.id'), nullable=False, index=True)
 
-    sort = db.Column(db.SmallInteger, nullable=False, default=0, server_default='0')
+    sort = db.Column(db.SmallInteger(), nullable=False, default=0, server_default='0')
     name = db.Column(db.String(255), nullable=False)
     type = db.Column(db.Enum(*list(FIELD_TYPES.keys()), name='field_type'), nullable=False)
 
@@ -47,3 +50,17 @@ class Field(db.Model):
     content_type = db.Column(db.String(32))
 
     api = db.relationship('Api')
+
+    def default_value(self):
+        if self.type == 'number':
+            return random.randint(0, 1000)
+
+        elif self.type == 'string':
+            if self.content_type == 'uuid':
+                return str(uuid.uuid4())
+            else:
+                return ''
+
+        elif self.type == 'bool':
+            return False
+

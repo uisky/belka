@@ -5,16 +5,19 @@ from wtforms import StringField, BooleanField
 from wtforms.validators import DataRequired
 
 from . import bp
-from belka.models import db, Api, Field
+from belka.models import db, Api, Field, Data
 
 
 @bp.get('/')
 @login_required
 def index():
-    q = db.select(Api)\
-        .filter_by(user_id=current_user.id)\
+    q = db.select(Api, db.func.count(Data.id))\
+        .outerjoin(Data)\
+        .filter(Api.user_id == current_user.id)\
+        .group_by(Api.id)\
         .order_by(Api.created)
-    apis = db.session.execute(q).scalars().all()
+
+    apis = db.session.execute(q).all()
 
     return render_template('my/index.html', apis=apis)
 
@@ -58,3 +61,46 @@ def edit(api_id=None):
 
     return render_template('my/edit.html', api=api, form=form)
 
+
+@bp.get('/apis/<int:api_id>/data')
+@login_required
+def data(api_id):
+    q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
+    api = db.one_or_404(q, description='API не найден. Удалили, может?')
+
+    q = db.select(Data).filter_by(api_id=api.id).order_by(Data.sort)
+    data = db.session.execute(q).scalars()
+
+    return render_template('my/data.html', api=api, data=data)
+
+
+@bp.post('/apis/<int:api_id>/data')
+def data_add(api_id):
+    q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
+    api = db.one_or_404(q, description='API не найден. Удалили, может?')
+
+    obj = Data(api_id=api.id)
+    obj.content = {}
+
+    q = db.select(db.func.max(Data.sort)).filter_by(api_id=api.id)
+    s = db.session.execute(q).scalar_one_or_none() or 0
+    obj.sort = s + 1
+
+    for field in api.fields:
+        obj.content[field.name] = request.form.get(field.name)
+
+    db.session.add(obj)
+    db.session.commit()
+
+    return redirect(url_for('.data', api_id=api.id))
+
+
+@bp.post('/api/<int:api_id>/data/delete')
+def data_delete(api_id):
+    q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
+    api = db.one_or_404(q, description='API не найден. Удалили, может?')
+
+    db.session.execute(db.delete(Data).filter_by(api_id=api.id, id=request.form['obj_id']))
+    db.session.commit()
+
+    return redirect(url_for('.data', api_id=api.id))

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>
+    API {{ api.name }}
+</h1>
+
+<h2>Добавить запись</h2>
+<form method="post" action="{{ url_for('.data_add', api_id=api.id) }}" class="mb-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {% for field in api.fields %}
+    <div class="row mb-3">
+        <div class="col-4 text-end">
+            <label class="control-label">
+                <small>
+                    ({{ field.type }}
+                    {%- if field.content_type %}, {{ field.content_type }}{% endif -%}
+                    )</small>
+                <code>{{ field.name }}:</code>
+            </label>
+        </div>
+        <div class="col-8">
+            {% if field.type == 'bool' %}
+                <input type="hidden" name="{{ field.name }}" value="0">
+                <input type="checkbox" name="{{ field.name }}" value="1">
+            {% elif field.type == 'string' %}
+                <input type="text" name="{{ field.name }}" value="{{ field.default_value() }}" class="form-control">
+            {% elif field.type == 'number' %}
+                <input type="number" name="{{ field.name }}" value="{{ field.default_value() }}" class="form-control">
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="row mb-3">
+        <div class="col-4">
+
+        </div>
+        <div class="col-8">
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+    </div>
+
+</form>
+
+<h2>Данные</h2>
+<table class="table table-bordered" id="data-list">
+    <thead>
+    <tr>
+        <th>#</th>
+        {% for field in api.fields %}
+            <th>{{ field.name }}</th>
+        {% endfor %}
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for obj in data %}
+        <tr data-id="{{ obj.id }}">
+            <td>{{ obj.sort }}</td>
+            {% for field in api.fields %}
+                <td>{{ obj.content[field.name] }}</td>
+            {% endfor %}
+            <td>
+                <a href="#" class="delete" title="Удалить запись">
+                    <i data-feather="delete"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<form method="post" action="{{ url_for('.data_delete', api_id=api.id) }}" id="form-delete">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="obj_id">
+</form>
+
+<script>
+(function() {
+    const
+        table = document.getElementById('data-list');
+
+    function delItem(e) {
+        const row = this.closest('tr');
+        const form = document.getElementById('form-delete');
+        form.querySelector('input[name=obj_id]').value = row.dataset.id;
+        form.submit();
+    }
+
+    for(const btn of table.querySelectorAll('a.delete')) {
+        btn.addEventListener('click', delItem);
+    }
+})();
+</script>
+
+
+{% endblock %}
