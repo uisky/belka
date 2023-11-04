@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>
+    {% if api.id %}
+        Схема API {{ api.name }}
+    {% else %}
+        Создать API
+    {% endif %}
+</h1>
+
+<form method="post" action="{{ url_for('.edit', api_id=api.id) }}">
+    {{ form.csrf_token }}
+    <div class="mb-3">
+        <label class="form-label">Имя* :</label>
+        {{ form.name(class='form-control') }}
+        <div class="form-text">
+            Только латинские буквы, цифры, дефисы и подчёркивания.
+            Это имя будет использоваться в URL вашего API.
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Название:</label>
+        {{ form.title(class='form-control') }}
+        <div class="form-text">
+            Это чисто для вас название, чтобы не запутаться в своих API. Можно не вводить.
+        </div>
+    </div>
+
+    <h2>Поля</h2>
+    <div id="fields">
+    {% for field in api.fields %}
+        <div class="row mb-3">
+            <input type="hidden" name="f_sort" value="{{ field.sort }}">
+            <div class="col">
+                <input type="text" name="f_name" placeholder="Имя" class="form-control" value="{{ field.name }}">
+            </div>
+            <div class="col">
+                <select name="f_type" class="form-select">
+                    {% for k, v in FIELD_TYPES.items() %}
+                        <option value="{{ k }}" {% if field.type == k %} selected {% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <select name="f_content_type" class="form-select">
+                    <option value="">Тип контента</option>
+                    <option value=""></option>
+                    {% for k, v in FIELD_CONTENT_TYPES.items() %}
+                        <option value="{{ k }}" {% if field.content_type == val %} selected {% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p>
+        <button type="button" id="btn-add" class="btn btn-success btn-sm">Добавить поле</button>
+    </p>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{{ url_for('.index') }}" class="btn btn-secondary">Отмена</a>
+</form>
+
+<template id="field-template">
+    <div class="row mb-3">
+        <input type="hidden" name="f_sort">
+        <div class="col">
+            <input type="text" name="f_name" placeholder="Имя" class="form-control">
+        </div>
+        <div class="col">
+            <select name="f_type" class="form-select">
+                {% for k, v in FIELD_TYPES.items() %}
+                    <option value="{{ k }}" {% if k == 'string' %} selected {% endif %}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col">
+            <select name="f_content_type" class="form-select">
+                <option value="">Тип контента</option>
+                <option value=""></option>
+                {% for k, v in FIELD_CONTENT_TYPES.items() %}
+                    <option value="{{ k }}">{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+(function() {
+    const
+        template = document.getElementById('field-template'),
+        elFields = document.getElementById('fields'),
+        elBtnAdd = document.getElementById('btn-add');
+
+    let fieldCount = 0;
+
+    elBtnAdd.addEventListener('click', (e) => {
+        console.log("Add field");
+        const row = template.content.cloneNode(true);
+        row.querySelector('input[name="f_sort"]').value = fieldCount;
+        elFields.appendChild(row);
+        fieldCount++;
+    });
+})();
+</script>
+
+{% endblock %}

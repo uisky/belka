@@ -1,0 +1,11 @@
+.mascot {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.mascot img {
+    border: 1px solid gray;
+    display: block;
+    margin: 0 auto 10px;
+}

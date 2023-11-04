@@ -9,7 +9,7 @@ def gen_password(length=12):
 
 
 def init_commands(app):
-    @app.cli.command('admin-create')
+    @app.cli.command('user-create')
     @click.argument("email")
     @click.argument("name")
     def user_create(email, name):
@@ -17,7 +17,7 @@ def init_commands(app):
             click.echo(f'User with email "{email}" already exists.')
             return
 
-        user = User(email=email, name=name, roles=['admin'])
+        user = User(email=email, name=name)
         password = input('Password (Enter * to generate): ')
         if password == '*':
             password = gen_password()

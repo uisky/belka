@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Мои API ({{ apis|length }})</h1>
+<p>
+    <a href="{{ url_for('.edit') }}" class="btn btn-success">Создать API</a>
+</p>
+
+{% if apis|length == 0 %}
+<div class="alert alert-info">
+    У вас нет ни одного API. Создайте его скорее!
+</div>
+{% else %}
+
+<div class="container">
+{% for api in apis %}
+<div class="row">
+    <div class="col-10">
+        <code>{{ api.name }}</code>
+        <p>{{ api.title }}</p>
+    </div>
+    <div class="col-2 text-end">
+        <a href="#" class="btn btn-sm btn-success mb-1">Данные</a>
+        <a href="{{ url_for('.edit', api_id=api.id) }}" class="btn btn-sm btn-warning mb-1">Изменить схему</a><br>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

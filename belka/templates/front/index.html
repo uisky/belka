@@ -5,7 +5,19 @@
 <h1>API generator</h1>
 
 <p>
-	Здесь можно создать своё API.
+	Здесь можно создать своё API. Вы создаёте схему объектов, нахуяриваете туда данных и получаете эндпоинт
+	вида <code>GET /api/v1/{api_name}</code>, который отдаёт эти объекты. У эндпоинта есть Query-параметры:
 </p>
+<ul>
+	<li><code>?filter.{field}={value}</code> Фильтрация по значению поля <code>{field}</code></li>
+	<li><code>?search.{field}={q}</code> Поиск по значению поля <code>{field}</code></li>
+	<li><code>?page={n}</code> Номер страницы. Default=0</li>
+	<li><code>?page_size={n}</code> Размер страницы. Default=20</li>
+</ul>
+
+<div class="mascot">
+	<img src="/static/mascot.jpg">
+	Made in Bishkek with love.
+</div>
 
 {% endblock %}
