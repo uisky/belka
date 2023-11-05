@@ -47,7 +47,7 @@
                     <option value="">Тип контента</option>
                     <option value=""></option>
                     {% for k, v in FIELD_CONTENT_TYPES.items() %}
-                        <option value="{{ k }}" {% if field.content_type == val %} selected {% endif %}>{{ v }}</option>
+                        <option value="{{ k }}" {% if field.content_type == k %} selected {% endif %}>{{ v }}</option>
                     {% endfor %}
                 </select>
             </div>

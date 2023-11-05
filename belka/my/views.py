@@ -26,7 +26,6 @@ class ApiForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     title = StringField('name')
     description = StringField('name')
-    active = BooleanField('active')
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -37,27 +36,37 @@ def edit(api_id=None):
         q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
         api = db.one_or_404(q, description='API не найден. Удалили, может?')
     else:
-        api = Api(user_id=current_user.id)
+        api = Api(user_id=current_user.id, active=True)
 
     form = ApiForm(obj=api)
 
     if form.validate_on_submit():
-        form.populate_obj(api)
-        db.session.add(api)
-        db.session.flush()
+        ok = True
+        if api.id is None:
+            q = db.select(Api).filter_by(name=form.name.data)
+            existing = db.session.execute(q).scalars().all()
+            print(existing)
+            if existing:
+                flash('Это имя уже занято', 'danger')
+                ok = False
 
-        if api.id:
-            db.session.execute(db.delete(Field).filter_by(api_id=api.id))
-        for i, f_sort in enumerate(request.form.getlist('f_sort')):
-            field = Field(api_id=api.id, sort=f_sort)
-            field.name = request.form.getlist('f_name')[i]
-            field.type = request.form.getlist('f_type')[i]
-            field.content_type = request.form.getlist('f_content_type')[i]
-            db.session.add(field)
+        if ok:
+            form.populate_obj(api)
+            db.session.add(api)
+            db.session.flush()
 
-        db.session.commit()
+            if api.id:
+                db.session.execute(db.delete(Field).filter_by(api_id=api.id))
+            for i, f_sort in enumerate(request.form.getlist('f_sort')):
+                field = Field(api_id=api.id, sort=f_sort)
+                field.name = request.form.getlist('f_name')[i]
+                field.type = request.form.getlist('f_type')[i]
+                field.content_type = request.form.getlist('f_content_type')[i]
+                db.session.add(field)
 
-        return redirect(url_for('.index'))
+            db.session.commit()
+
+            return redirect(url_for('.index'))
 
     return render_template('my/edit.html', api=api, form=form)
 
@@ -87,7 +96,7 @@ def data_add(api_id):
     obj.sort = s + 1
 
     for field in api.fields:
-        obj.content[field.name] = request.form.get(field.name)
+        obj.content[field.name] = field.coerce(request.form.get(field.name))
 
     db.session.add(obj)
     db.session.commit()

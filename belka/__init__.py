@@ -27,9 +27,10 @@ def create_app(test_config=None):
     Migrate(app, db)
 
     # Blueprints
-    from belka import front, my
+    from belka import front, my, api
     app.register_blueprint(front.bp)
     app.register_blueprint(my.bp)
+    app.register_blueprint(api.bp)
 
     # Login
     login_manager = LoginManager()
