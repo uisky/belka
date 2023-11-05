@@ -1,3 +1,5 @@
+import json
+
 from flask import redirect, render_template, request, flash, url_for, abort
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_wtf import FlaskForm
@@ -84,6 +86,7 @@ def data(api_id):
 
 
 @bp.post('/apis/<int:api_id>/data')
+@login_required
 def data_add(api_id):
     q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
     api = db.one_or_404(q, description='API не найден. Удалили, может?')
@@ -105,6 +108,7 @@ def data_add(api_id):
 
 
 @bp.post('/api/<int:api_id>/data/delete')
+@login_required
 def data_delete(api_id):
     q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
     api = db.one_or_404(q, description='API не найден. Удалили, может?')
@@ -113,3 +117,48 @@ def data_delete(api_id):
     db.session.commit()
 
     return redirect(url_for('.data', api_id=api.id))
+
+
+@bp.route('/api/<int:api_id>/data/import', methods=['GET', 'POST'])
+@login_required
+def data_import(api_id):
+    q = db.select(Api).filter_by(user_id=current_user.id, id=api_id)
+    api = db.one_or_404(q, description='API не найден. Удалили, может?')
+
+    def process_data():
+        if type(data) is not list:
+            flash('В JSON должен содержаться массив объектов!', 'danger')
+            return False
+
+        q = db.select(db.func.max(Data.sort)).filter_by(api_id=api.id)
+        s = db.session.execute(q).scalar_one_or_none() or 0
+        new_sort = s + 1
+
+        for i, src_obj in enumerate(data):
+            put_obj = {}
+            for field in api.fields:
+                if field.name in src_obj:
+                    put_obj[field.name] = field.coerce(src_obj[field.name])
+            if not put_obj:
+                flash(f'В элементе #{i} не было ни одного свойства из схемы', 'warning')
+                continue
+
+            rec = Data(api_id=api.id, sort=new_sort, content=put_obj)
+            new_sort += 1
+            db.session.add(rec)
+
+        db.session.commit()
+        return True
+
+    if request.form.get('json'):
+        try:
+            data = json.loads(request.form['json'])
+        except json.decoder.JSONDecodeError as e:
+            flash('Ошибка в JSON: ' + str(e), 'danger')
+        else:
+            if process_data():
+                return redirect(url_for('.index'))
+
+    return render_template('my/data_import.html', api=api)
+
+

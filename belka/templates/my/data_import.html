@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>
+    API {{ api.name }}: импортнуть данные
+</h1>
+
+<p>
+    Данные можно импортировать из JSON. В нём должен быть массив объектов с полями, которые есть в
+    схеме API ({% for field in api.fields %}<code>{{ field.name }}</code>{% if not loop.last %}, {% endif %}{% endfor %}).
+    Другие свойства будут проигнорированы. Объекты, в которых нет какого-нибудь из свойств схемы, будут пропущены.
+</p>
+
+<form method="post" action="{{ url_for('.data_import', api_id=api.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3">
+        <textarea name="json" rows="10" class="form-control" placeholder="[
+    {
+        {% for field in api.fields %}{{ field.name }}: &quot;...&quot;{% if not loop.last %},
+        {% endif %}{% endfor %}
+    },
+    ...
+]"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Импортировать</button>
+    <a href="{{ url_for('.index') }}" class="btn btn-secondary">Отмена</a>
+</form>
+
+
+{% endblock %}

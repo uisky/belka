@@ -15,15 +15,16 @@
 <div class="container">
 {% for api, cnt_data in apis %}
 <div class="row mb-4" style="border-bottom: 2px solid black">
-    <div class="col-10">
+    <div class="col-9">
         <code><strong>{{ api.name }}</strong></code> (записей: {{ cnt_data }} шт)
         <p>{{ api.title }}</p>
         <a href="{{ url_for('api.items', api_name=api.name, _external=True) }}" target="_blank"><code>
             {{ url_for('api.items', api_name=api.name, _external=True) }}
         </code></a>
     </div>
-    <div class="col-2 text-end">
+    <div class="col-3 text-end">
         <a href="{{ url_for('.data', api_id=api.id) }}" class="btn btn-sm btn-success mb-1">Данные</a>
+        <a href="{{ url_for('.data_import', api_id=api.id) }}" class="btn btn-sm btn-success mb-1">Импортировать</a>
         <a href="{{ url_for('.edit', api_id=api.id) }}" class="btn btn-sm btn-warning mb-1">Изменить схему</a><br>
     </div>
 </div>
