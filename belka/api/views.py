@@ -44,7 +44,7 @@ def items(api_name):
     total = len(result)
     result = result[page * pagesize : (page + 1) * pagesize]
 
-    resp = jsonify(result)
+    resp = jsonify({'total': total, 'results': result})
     resp.headers['X-Total'] = str(total)
     return resp
 
