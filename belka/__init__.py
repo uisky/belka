@@ -22,6 +22,10 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
+    app.json.ensure_ascii = False
+    app.json.sort_keys = True
+    app.json.compact = False
+
     # ORM & migrations
     db.init_app(app)
     Migrate(app, db)
