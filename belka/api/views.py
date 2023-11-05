@@ -39,7 +39,7 @@ def items(api_name):
             result.append(item)
 
     page = request.args.get('page', 0, type=int)
-    pagesize = request.args.get('pagesize', 20, type=int)
+    pagesize = request.args.get('page_size', 20, type=int)
 
     result = result[page * pagesize : (page + 1) * pagesize]
 
