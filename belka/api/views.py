@@ -41,10 +41,11 @@ def items(api_name):
     page = request.args.get('page', 0, type=int)
     pagesize = request.args.get('page_size', 20, type=int)
 
+    total = len(result)
     result = result[page * pagesize : (page + 1) * pagesize]
 
     resp = jsonify(result)
-    resp.headers['X-Total'] = str(len(data))
+    resp.headers['X-Total'] = str(total)
     return resp
 
 

@@ -18,8 +18,8 @@
     <div class="col-9">
         <code><strong>{{ api.name }}</strong></code> (записей: {{ cnt_data }} шт)
         <p>{{ api.title }}</p>
-        <a href="{{ url_for('api.items', api_name=api.name, _external=True) }}" target="_blank"><code>
-            {{ url_for('api.items', api_name=api.name, _external=True) }}
+        <a href="{{ url_for('api.items', api_name=api.name, _external=True, _scheme='https') }}" target="_blank"><code>
+            {{ url_for('api.items', api_name=api.name, _external=True, _scheme='https') }}
         </code></a>
     </div>
     <div class="col-3 text-end">
