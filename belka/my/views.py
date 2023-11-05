@@ -139,6 +139,8 @@ def data_import(api_id):
             for field in api.fields:
                 if field.name in src_obj:
                     put_obj[field.name] = field.coerce(src_obj[field.name])
+                else:
+                    put_obj[field.name] = None
             if not put_obj:
                 flash(f'В элементе #{i} не было ни одного свойства из схемы', 'warning')
                 continue

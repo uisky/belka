@@ -76,4 +76,7 @@ class Field(db.Model):
                 val = int(val)
         elif self.type == 'bool':
             val = bool(val)
+        elif self.type == 'string':
+            val = str(val)
+
         return val
