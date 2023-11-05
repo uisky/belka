@@ -4,6 +4,7 @@
 <h1>Регистрация</h1>
 
 <form method="post" action="{{ url_for('front.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="mb-3">
         <label>Email:</label>
         <input type="text" name="email" class="form-control">
@@ -17,7 +18,7 @@
     <div class="mb-3">
         <label>А зовут меня:</label>
         <input type="text" name="name" class="form-control" placeholder="Генадий">
-        <p class="form-text">Нам, в принципе, до пизды, как вас зовут.</p>
+        <p class="form-text">Нам, в принципе, всё равно, как вас зовут.</p>
     </div>
     <button type="submit" class="btn btn-primary">Enter</button>
     <a href="{{ url_for('front.login') }}">Я вспомнил, у меня есть рега</a>

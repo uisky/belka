@@ -13,14 +13,14 @@ def register():
 @bp.post('/register/')
 def register_post():
     email = request.form['email'].strip().lower()
-    if email == '':
-        flash('Email is incorrect', 'danger')
-        return redirect('front.register')
+    if email == '' or '@' not in email:
+        flash('Почту введи нормальную, да', 'danger')
+        return redirect(url_for('front.register'))
 
     password = request.form['password']
     if len(password) < 6:
-        flash('Password should be longer than 6 characters', 'danger')
-        return redirect('front.register')
+        flash('Пароль нормальный придумай, да', 'danger')
+        return redirect(url_for('front.register'))
 
     name = request.form['name'].strip()
 
@@ -44,11 +44,11 @@ def login_post():
     user = db.session.execute(q).scalar_one_or_none()
 
     if not user:
-        flash('Invalid email or password.', 'danger')
+        flash('Нормально представься, э.', 'danger')
         return redirect(url_for('.login'))
 
     login_user(user)
-    return redirect(url_for('.index'))
+    return redirect(url_for('my.index'))
 
 
 @bp.get('/logout/')

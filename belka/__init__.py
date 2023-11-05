@@ -36,6 +36,9 @@ def create_app(test_config=None):
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.anonymous_user = AnonymousUser
+    login_manager.login_view = 'front.login'
+    login_manager.login_message = 'Чтобы этим пользоваться, нужно войти или зарегаться'
+    login_manager.login_message_category = 'info'
 
     @login_manager.user_loader
     def load_user(user_id):
